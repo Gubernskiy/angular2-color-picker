@@ -227,6 +227,7 @@ export class DialogComponent implements OnInit {
     private hslaText: Hsla;
     private hexText: string;
     private outputColor: string;
+    private firstColor: string;
     private selectedColor: string;
     private alphaSliderColor: string;
     private hueSliderColor: string;
@@ -262,15 +263,21 @@ export class DialogComponent implements OnInit {
     private cpDialogDisplay: string;
     private cpSaveClickOutside: boolean;
     private cpAlphaChannel: string;
-    private cpEmitByMove:boolean;
+    private cpEmitByMove: boolean;
 
 
     private dialogArrowSize: number = 10;
     private dialogArrowOffset: number = 15;
     private arrowTop: number;
 
+    @ViewChild('colorSlider') colorSlider: any;
+    @ViewChild('colorSliderCursor') colorSliderCursor: any;
+
     @ViewChild('hueSlider') hueSlider: any;
+    @ViewChild('hueSliderCursor') hueSliderCursor: any;
+
     @ViewChild('alphaSlider') alphaSlider: any;
+    @ViewChild('alphaSliderCursor') alphaSliderCursor: any;
 
     @ViewChild('dialogPopup') dialogElement: any;
 
@@ -315,9 +322,8 @@ export class DialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        let alphaWidth = this.alphaSlider.nativeElement.offsetWidth;
-        let hueWidth = this.hueSlider.nativeElement.offsetWidth;
-        this.sliderDimMax = new SliderDimension(hueWidth, this.cpWidth, 130, alphaWidth);
+        this.sliderDimMax = new SliderDimension(0, 0, 0, 0);
+
         this.slider = new SliderPosition(0, 0, 0, 0);
         if (this.cpOutputFormat === 'rgba') {
             this.format = 1;
@@ -337,6 +343,19 @@ export class DialogComponent implements OnInit {
         };
         this.openDialog(this.initialColor, false);
     }
+
+    ngAfterViewInit() {
+        let alphaWidth = this.alphaSlider.nativeElement.offsetWidth;
+        let hueWidth = this.hueSlider.nativeElement.offsetWidth;
+
+        this.sliderDimMax = new SliderDimension(hueWidth, this.cpWidth, this.colorSlider.nativeElement.offsetHeight, alphaWidth);
+
+        setTimeout(() => {
+            this.slider = new SliderPosition((this.hsva.h) * this.sliderDimMax.h - this.hueSliderCursor.nativeElement.offsetWidth / 2, this.hsva.s * this.sliderDimMax.s - this.colorSliderCursor.nativeElement.offsetWidth / 2,
+                (1 - this.hsva.v) * this.sliderDimMax.v - this.colorSliderCursor.nativeElement.offsetHeight / 2, this.hsva.a * this.sliderDimMax.a - this.alphaSliderCursor.nativeElement.offsetWidth / 2);
+        });
+    }
+
 
     setInitialColor(color: any) {
         this.initialColor = color;
@@ -382,16 +401,20 @@ export class DialogComponent implements OnInit {
         if ((!this.isDescendant(this.el.nativeElement, event.target)
             && event.target != this.directiveElementRef.nativeElement &&
             this.cpIgnoredElements.filter((item: any) => item === event.target).length === 0) && this.cpDialogDisplay === 'popup') {
+
             if (!this.cpSaveClickOutside) {
                 this.setColorFromString(this.initialColor, false);
                 this.directiveInstance.colorChanged(this.initialColor)
             }
+
             this.closeColorPicker();
         }
+
+        this.firstColor = this.service.outputFormat(this.hsva, this.cpOutputFormat, this.cpAlphaChannel === 'hex8');
     }
 
     onMouseUp(event: MouseEvent) {
-        if(this.isDescendant(this.el.nativeElement, event.target)) {
+        if (((event.target as HTMLElement).className == "cursor" && this.isDescendant(this.el.nativeElement, event.target)) || this.firstColor != this.outputColor) {
             this.directiveInstance.colorChanged(this.outputColor);
         }
     }
@@ -483,10 +506,20 @@ export class DialogComponent implements OnInit {
 
     setHue(val: {v: number, rg: number}) {
         this.hsva.h = val.v / val.rg;
+        this.update();
+    }
+
+    setHueByCursor(val: {v: number, rg: number}) {
+        this.hsva.h = val.v / val.rg;
         this.update(this.cpEmitByMove);
     }
 
     setAlpha(val: {v: number, rg: number}) {
+        this.hsva.a = val.v / val.rg;
+        this.update();
+    }
+
+    setAlphaByCursor(val: {v: number, rg: number}) {
         this.hsva.a = val.v / val.rg;
         this.update(this.cpEmitByMove);
     }
@@ -546,8 +579,8 @@ export class DialogComponent implements OnInit {
         this.outputColor = this.service.outputFormat(this.hsva, this.cpOutputFormat, this.cpAlphaChannel === 'hex8');
         this.selectedColor = this.service.outputFormat(this.hsva, 'rgba', false);
 
-        this.slider = new SliderPosition((this.hsva.h) * this.sliderDimMax.h - 8, this.hsva.s * this.sliderDimMax.s - 8,
-            (1 - this.hsva.v) * this.sliderDimMax.v - 8, this.hsva.a * this.sliderDimMax.a - 8)
+        this.slider = new SliderPosition((this.hsva.h) * this.sliderDimMax.h - this.hueSliderCursor.nativeElement.offsetWidth / 2, this.hsva.s * this.sliderDimMax.s - this.colorSliderCursor.nativeElement.offsetWidth / 2,
+            (1 - this.hsva.v) * this.sliderDimMax.v - this.colorSliderCursor.nativeElement.offsetHeight / 2, this.hsva.a * this.sliderDimMax.a - this.alphaSliderCursor.nativeElement.offsetWidth / 2);
 
         if (emit && lastOutput !== this.outputColor) {
             this.directiveInstance.colorChanged(this.outputColor);
