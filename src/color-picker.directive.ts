@@ -566,7 +566,8 @@ export class DialogComponent implements OnInit {
 
         this.hslaText = new Hsla(Math.round((hsla.h) * 360), Math.round(hsla.s * 100), Math.round(hsla.l * 100), Math.round(hsla.a * 100) / 100);
         this.rgbaText = new Rgba(rgba.r, rgba.g, rgba.b, Math.round(rgba.a * 100) / 100);
-        this.hexText = this.service.hexText(rgba, this.cpAlphaChannel === 'hex8');
+        //this.hexText = this.service.hexText(rgba, this.cpAlphaChannel === 'hex8');
+        this.hexText = this.service.hexText(rgba, false);
 
         this.alphaSliderColor = 'rgb(' + rgba.r + ',' + rgba.g + ',' + rgba.b + ')';
         this.hueSliderColor = 'rgb(' + hueRgba.r + ',' + hueRgba.g + ',' + hueRgba.b + ')';

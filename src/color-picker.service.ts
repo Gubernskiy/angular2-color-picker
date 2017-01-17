@@ -3,7 +3,8 @@ import {Rgba, Hsla, Hsva} from './classes';
 
 @Injectable()
 export class ColorPickerService {
-    constructor() { }
+    constructor() {
+    }
 
     hsla2hsva(hsla: Hsla): Hsva {
         let h = Math.min(hsla.h, 1), s = Math.min(hsla.s, 1), l = Math.min(hsla.l, 1), a = Math.min(hsla.a, 1);
@@ -93,7 +94,7 @@ export class ColorPickerService {
         let stringParsers = [
             {
                 re: /(rgb)a?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*%?,\s*(\d{1,3})\s*%?(?:,\s*(\d+(?:\.\d+)?)\s*)?\)/,
-                parse: function(execResult: any) {
+                parse: function (execResult: any) {
                     return new Rgba(parseInt(execResult[2]) / 255,
                         parseInt(execResult[3]) / 255,
                         parseInt(execResult[4]) / 255,
@@ -102,7 +103,7 @@ export class ColorPickerService {
             },
             {
                 re: /(hsl)a?\(\s*(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)/,
-                parse: function(execResult: any) {
+                parse: function (execResult: any) {
                     return new Hsla(parseInt(execResult[2]) / 360,
                         parseInt(execResult[3]) / 100,
                         parseInt(execResult[4]) / 100,
@@ -113,34 +114,34 @@ export class ColorPickerService {
         if (hex8) {
             stringParsers.push({
                 re: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/,
-                parse: function(execResult: any) {
+                parse: function (execResult: any) {
                     return new Rgba(parseInt(execResult[1], 16) / 255,
                         parseInt(execResult[2], 16) / 255,
                         parseInt(execResult[3], 16) / 255,
                         parseInt(execResult[4], 16) / 255);
                 }
             });
-        } else {
-            stringParsers.push({
+        }
+
+        stringParsers.push({
                 re: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/,
-                parse: function(execResult: any) {
+                parse: function (execResult: any) {
                     return new Rgba(parseInt(execResult[1], 16) / 255,
                         parseInt(execResult[2], 16) / 255,
                         parseInt(execResult[3], 16) / 255,
                         1);
                 }
             },
-                {
-                    re: /#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])$/,
-                    parse: function(execResult: any) {
-                        return new Rgba(parseInt(execResult[1] + execResult[1], 16) / 255,
-                            parseInt(execResult[2] + execResult[2], 16) / 255,
-                            parseInt(execResult[3] + execResult[3], 16) / 255,
-                            1);
-                    }
-                });
-        }
-        
+            {
+                re: /#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])$/,
+                parse: function (execResult: any) {
+                    return new Rgba(parseInt(execResult[1] + execResult[1], 16) / 255,
+                        parseInt(execResult[2] + execResult[2], 16) / 255,
+                        parseInt(execResult[3] + execResult[3], 16) / 255,
+                        1);
+                }
+            });
+
 
         colorString = colorString.toLowerCase();
         let hsva: Hsva = null;
