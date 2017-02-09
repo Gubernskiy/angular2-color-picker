@@ -29,6 +29,7 @@ export declare class ColorPickerDirective implements OnInit, OnChanges {
     cpDialogDisplay: string;
     cpSaveClickOutside: boolean;
     cpAlphaChannel: string;
+    cpEmitByMove: boolean;
     private dialog;
     private created;
     private ignoreChanges;
@@ -71,6 +72,7 @@ export declare class DialogComponent implements OnInit {
     private hslaText;
     private hexText;
     private outputColor;
+    private firstColor;
     private selectedColor;
     private alphaSliderColor;
     private hueSliderColor;
@@ -85,6 +87,7 @@ export declare class DialogComponent implements OnInit {
     private initialColor;
     private directiveElementRef;
     private listenerMouseDown;
+    private listenerMouseUp;
     private listenerResize;
     private cpPosition;
     private cpPositionOffset;
@@ -103,21 +106,28 @@ export declare class DialogComponent implements OnInit {
     private cpDialogDisplay;
     private cpSaveClickOutside;
     private cpAlphaChannel;
+    private cpEmitByMove;
     private dialogArrowSize;
     private dialogArrowOffset;
     private arrowTop;
+    colorSlider: any;
+    colorSliderCursor: any;
     hueSlider: any;
+    hueSliderCursor: any;
     alphaSlider: any;
+    alphaSliderCursor: any;
     dialogElement: any;
     constructor(el: ElementRef, service: ColorPickerService);
-    setDialog(instance: any, elementRef: ElementRef, color: any, cpPosition: string, cpPositionOffset: string, cpPositionRelativeToArrow: boolean, cpOutputFormat: string, cpPresetLabel: string, cpPresetColors: Array<string>, cpCancelButton: boolean, cpCancelButtonClass: string, cpCancelButtonText: string, cpOKButton: boolean, cpOKButtonClass: string, cpOKButtonText: string, cpHeight: string, cpWidth: string, cpIgnoredElements: any, cpDialogDisplay: string, cpSaveClickOutside: boolean, cpAlphaChannel: string): void;
+    setDialog(instance: any, elementRef: ElementRef, color: any, cpPosition: string, cpPositionOffset: string, cpPositionRelativeToArrow: boolean, cpOutputFormat: string, cpPresetLabel: string, cpPresetColors: Array<string>, cpCancelButton: boolean, cpCancelButtonClass: string, cpCancelButtonText: string, cpOKButton: boolean, cpOKButtonClass: string, cpOKButtonText: string, cpHeight: string, cpWidth: string, cpIgnoredElements: any, cpDialogDisplay: string, cpSaveClickOutside: boolean, cpAlphaChannel: string, cpEmitByMove: boolean): void;
     ngOnInit(): void;
+    ngAfterViewInit(): void;
     setInitialColor(color: any): void;
     openDialog(color: any, emit?: boolean): void;
     cancelColor(): void;
     oKColor(): void;
     setColorFromString(value: string, emit?: boolean): void;
     onMouseDown(event: any): void;
+    onMouseUp(event: MouseEvent): void;
     openColorPicker(): void;
     closeColorPicker(): void;
     onResize(): void;
@@ -134,7 +144,15 @@ export declare class DialogComponent implements OnInit {
         v: number;
         rg: number;
     }): void;
+    setHueByCursor(val: {
+        v: number;
+        rg: number;
+    }): void;
     setAlpha(val: {
+        v: number;
+        rg: number;
+    }): void;
+    setAlphaByCursor(val: {
         v: number;
         rg: number;
     }): void;
@@ -160,4 +178,6 @@ export declare class DialogComponent implements OnInit {
     update(emit?: boolean): void;
     isDescendant(parent: any, child: any): boolean;
     createBox(element: any, offset: boolean): any;
+}
+export declare class DynamicCpModule {
 }
