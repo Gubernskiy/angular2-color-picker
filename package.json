@@ -30,9 +30,9 @@
     "typescript": "^2.0.3",
     "typings": "^1.4.0"
   },
-  "files":[
-      "lib/*",
-      "index.d.ts",
-      "index.ts"
+  "files": [
+    "lib/*",
+    "index.d.ts",
+    "index.ts"
   ]
 }
